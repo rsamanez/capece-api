@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # Node.js Express implementation
+  nodejs-api:
+    build:
+      context: ./nodejs-express
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - tracking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Python Django implementation
+  python-api:
+    build:
+      context: ./python-django
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=tracking_api.settings
+    networks:
+      - tracking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PHP Laravel implementation
+  php-api:
+    build:
+      context: ./php-laravel
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENV=production
+    networks:
+      - tracking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Go implementation
+  go-api:
+    build:
+      context: ./go
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - tracking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Rust implementation
+  rust-api:
+    build:
+      context: ./rust
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    networks:
+      - tracking-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - nodejs-api
+      - python-api
+      - php-api
+      - go-api
+      - rust-api
+    networks:
+      - tracking-network
+
+networks:
+  tracking-network:
+    driver: bridge
