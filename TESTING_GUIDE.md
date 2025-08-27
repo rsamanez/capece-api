@@ -172,16 +172,16 @@ go run main.go
 **Step 3: Test Endpoints**
 ```bash
 # Health Check
-curl -s "http://localhost:8081/health" | jq .
+curl -s "http://localhost:8083/health" | jq .
 
 # Valid Tracking Number - UPS
-curl -s "http://localhost:8081/api/v1/tracking/1Z999AA1234567890" | jq .
+curl -s "http://localhost:8083/api/v1/tracking/1Z999AA1234567890" | jq .
 
 # Valid Tracking Number - FedEx
-curl -s "http://localhost:8081/api/v1/tracking/FDX123456789012" | jq .
+curl -s "http://localhost:8083/api/v1/tracking/FDX123456789012" | jq .
 
 # Invalid Tracking Number
-curl -s "http://localhost:8081/api/v1/tracking/INVALID123" | jq .
+curl -s "http://localhost:8083/api/v1/tracking/INVALID123" | jq .
 ```
 
 ---
@@ -229,6 +229,236 @@ curl -s "http://localhost:8082/api/v1/tracking/INVALID123" | jq .
 - **200**: Successful tracking found
 - **404**: Tracking number not found
 - **400**: Invalid tracking number format (if validation implemented)
+
+## 📎 Evidence Upload Testing
+
+### Overview
+
+Test the evidence upload functionality across all implementations. This section provides comprehensive testing for file upload, retrieval, and deletion.
+
+### Prerequisites for Evidence Testing
+
+- Running server (any implementation)
+- Test image file (PNG, JPG, JPEG, or PDF)
+- `curl` command line tool
+
+### Creating Test Files
+
+Create test files for upload testing:
+
+```bash
+# Create a small test PNG image
+echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==" | base64 -d > test-image.png
+
+# Create a test text file (for PDF testing if needed)
+echo "Test delivery evidence document" > test-document.txt
+
+# Verify file was created
+ls -la test-image.png
+file test-image.png
+```
+
+### Step-by-Step Evidence Testing
+
+#### Step 1: Test Evidence Retrieval (Empty State)
+
+Test that evidence endpoint returns empty results initially:
+
+```bash
+# For Node.js (Port 3000)
+curl -s "http://localhost:3000/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# For Python Django (Port 8000) - Note the trailing slash
+curl -s "http://localhost:8000/api/v1/tracking/1Z999AA1234567890/evidence/" | jq .
+
+# For Go (Port 8083)
+curl -s "http://localhost:8083/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# For Rust (Port 8082)
+curl -s "http://localhost:8082/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Expected Response:
+{
+  "trackingNumber": "1Z999AA1234567890",
+  "evidenceCount": 0,
+  "evidence": []
+}
+```
+
+#### Step 2: Upload Evidence
+
+Upload a test image with description:
+
+```bash
+# For Node.js (Port 3000)
+curl -X POST \
+  "http://localhost:3000/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@test-image.png" \
+  -F "description=Test delivery evidence - package at front door" \
+  | jq .
+
+# For Python Django (Port 8000) - Note the trailing slash
+curl -X POST \
+  "http://localhost:8000/api/v1/tracking/1Z999AA1234567890/evidence/" \
+  -F "image=@test-image.png" \
+  -F "description=Test delivery evidence - package at front door" \
+  | jq .
+
+# For Go (Port 8083)
+curl -X POST \
+  "http://localhost:8083/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@test-image.png" \
+  -F "description=Test delivery evidence - package at front door" \
+  | jq .
+
+# For Rust (Port 8082)
+curl -X POST \
+  "http://localhost:8082/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@test-image.png" \
+  -F "description=Test delivery evidence - package at front door" \
+  | jq .
+
+# Expected Response:
+{
+  "success": true,
+  "message": "Delivery evidence uploaded successfully",
+  "trackingNumber": "1Z999AA1234567890",
+  "evidence": {
+    "id": "uuid-generated-id",
+    "filename": "uuid-filename.png",
+    "originalName": "test-image.png",
+    "size": 70,
+    "mimeType": "image/png",
+    "uploadedAt": "2025-08-27T05:46:06.169Z",
+    "description": "Test delivery evidence - package at front door",
+    "url": "/uploads/evidence/1Z999AA1234567890/uuid-filename.png"
+  }
+}
+```
+
+#### Step 3: Verify Evidence was Stored
+
+Retrieve the evidence list to confirm upload:
+
+```bash
+# Use same GET commands as Step 1
+curl -s "http://localhost:{port}/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Expected Response (now with evidence):
+{
+  "trackingNumber": "1Z999AA1234567890",
+  "evidenceCount": 1,
+  "evidence": [
+    {
+      "id": "uuid-generated-id",
+      "filename": "uuid-filename.png",
+      "originalName": "test-image.png",
+      "size": 70,
+      "mimeType": "image/png",
+      "uploadedAt": "2025-08-27T05:46:06.169Z",
+      "description": "Test delivery evidence - package at front door",
+      "url": "/uploads/evidence/1Z999AA1234567890/uuid-filename.png"
+    }
+  ]
+}
+```
+
+#### Step 4: Test File Access
+
+Verify uploaded files are accessible via URL:
+
+```bash
+# Test file access via static URL
+curl -I "http://localhost:{port}/uploads/evidence/1Z999AA1234567890/uuid-filename.png"
+
+# Expected Response Headers:
+HTTP/1.1 200 OK
+Content-Type: image/png
+Content-Length: 70
+```
+
+#### Step 5: Test Error Scenarios
+
+Test various error conditions:
+
+```bash
+# Test missing file
+curl -X POST \
+  "http://localhost:{port}/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "description=Test without file" \
+  | jq .
+
+# Expected: 400 Bad Request with error message
+
+# Test invalid file type (create a text file with .exe extension)
+echo "invalid file" > invalid.exe
+curl -X POST \
+  "http://localhost:{port}/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@invalid.exe" \
+  -F "description=Invalid file type test" \
+  | jq .
+
+# Expected: 400 Bad Request with file type error
+```
+
+#### Step 6: Test Evidence Deletion (Optional)
+
+Test deleting uploaded evidence:
+
+```bash
+# Get evidence ID from previous responses, then delete
+curl -X DELETE \
+  "http://localhost:{port}/api/v1/tracking/1Z999AA1234567890/evidence/uuid-generated-id" \
+  | jq .
+
+# Expected Response:
+{
+  "success": true,
+  "message": "Evidence deleted successfully"
+}
+
+# Verify deletion
+curl -s "http://localhost:{port}/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Should show evidenceCount: 0 again
+```
+
+### Evidence Testing Checklist
+
+Use this checklist to verify evidence functionality:
+
+- [ ] **Empty State**: GET request returns empty evidence list
+- [ ] **Upload Success**: POST with valid image uploads successfully
+- [ ] **Upload Validation**: POST without file returns error
+- [ ] **File Type Validation**: Invalid file types are rejected
+- [ ] **File Access**: Uploaded files are accessible via URL
+- [ ] **Evidence Retrieval**: GET request shows uploaded evidence
+- [ ] **Evidence Deletion**: DELETE request removes evidence (✅ Disponible en todas las implementaciones)
+- [ ] **UUID Generation**: Each upload gets unique filename
+- [ ] **Metadata Storage**: Original filename, size, and description are stored
+
+> ✅ **Actualizado**: Todas las implementaciones (Node.js, Python, PHP, Go, Rust) ahora incluyen funcionalidad completa de DELETE para evidencia.
+
+### Multiple File Upload Testing
+
+Test uploading multiple evidence files:
+
+```bash
+# Upload first evidence
+curl -X POST "http://localhost:{port}/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@test-image.png" \
+  -F "description=Front door delivery photo"
+
+# Upload second evidence  
+curl -X POST "http://localhost:{port}/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@test-image.png" \
+  -F "description=Package close-up photo"
+
+# Verify both are stored
+curl -s "http://localhost:{port}/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Should show evidenceCount: 2 with both files
+```
 
 ### 🐛 Troubleshooting
 
@@ -306,11 +536,11 @@ Create a Postman collection with these requests:
 
 7. **Go Health**
    - Method: GET
-   - URL: `http://localhost:8081/health`
+   - URL: `http://localhost:8083/health`
 
 8. **Go Tracking**
    - Method: GET
-   - URL: `http://localhost:8081/api/v1/tracking/1Z999AA1234567890`
+   - URL: `http://localhost:8083/api/v1/tracking/1Z999AA1234567890`
 
 9. **Rust Health**
    - Method: GET
@@ -336,7 +566,7 @@ done
 time curl -s "http://localhost:3000/api/v1/tracking/1Z999AA1234567890" > /dev/null  # Node.js
 time curl -s "http://localhost:8000/api/v1/tracking/1Z999AA1234567890/" > /dev/null # Python
 time curl -s "http://localhost:8080/api/v1/tracking/1Z999AA1234567890" > /dev/null  # PHP
-time curl -s "http://localhost:8081/api/v1/tracking/1Z999AA1234567890" > /dev/null  # Go
+time curl -s "http://localhost:8083/api/v1/tracking/1Z999AA1234567890" > /dev/null  # Go
 time curl -s "http://localhost:8082/api/v1/tracking/1Z999AA1234567890" > /dev/null  # Rust
 ```
 
@@ -510,16 +740,16 @@ go run main.go
 **Paso 3: Probar Endpoints**
 ```bash
 # Verificación de Salud
-curl -s "http://localhost:8081/health" | jq .
+curl -s "http://localhost:8083/health" | jq .
 
 # Número de Seguimiento Válido - UPS
-curl -s "http://localhost:8081/api/v1/tracking/1Z999AA1234567890" | jq .
+curl -s "http://localhost:8083/api/v1/tracking/1Z999AA1234567890" | jq .
 
 # Número de Seguimiento Válido - FedEx
-curl -s "http://localhost:8081/api/v1/tracking/FDX123456789012" | jq .
+curl -s "http://localhost:8083/api/v1/tracking/FDX123456789012" | jq .
 
 # Número de Seguimiento Inválido
-curl -s "http://localhost:8081/api/v1/tracking/INVALID123" | jq .
+curl -s "http://localhost:8083/api/v1/tracking/INVALID123" | jq .
 ```
 
 ---
@@ -567,6 +797,234 @@ curl -s "http://localhost:8082/api/v1/tracking/INVALID123" | jq .
 - **200**: Seguimiento encontrado exitosamente
 - **404**: Número de seguimiento no encontrado
 - **400**: Formato de número de seguimiento inválido (si se implementa validación)
+
+## 📎 Pruebas de Subida de Evidencia
+
+### Resumen
+
+Prueba la funcionalidad de subida de evidencia en todas las implementaciones. Esta sección proporciona pruebas exhaustivas para subida, recuperación y eliminación de archivos.
+
+### Prerrequisitos para Pruebas de Evidencia
+
+- Servidor ejecutándose (cualquier implementación)
+- Archivo de imagen de prueba (PNG, JPG, JPEG, o PDF)
+- Herramienta de línea de comandos `curl`
+
+### Creando Archivos de Prueba
+
+Crear archivos de prueba para testing de subidas:
+
+```bash
+# Crear una imagen PNG de prueba pequeña
+echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==" | base64 -d > imagen-prueba.png
+
+# Crear un archivo de texto de prueba (para testing PDF si es necesario)
+echo "Documento de evidencia de entrega de prueba" > documento-prueba.txt
+
+# Verificar que el archivo fue creado
+ls -la imagen-prueba.png
+file imagen-prueba.png
+```
+
+### Pruebas de Evidencia Paso a Paso
+
+#### Paso 1: Probar Recuperación de Evidencia (Estado Vacío)
+
+Probar que el endpoint de evidencia retorna resultados vacíos inicialmente:
+
+```bash
+# Para Node.js (Puerto 3000)
+curl -s "http://localhost:3000/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Para Python Django (Puerto 8000) - Nota la barra final
+curl -s "http://localhost:8000/api/v1/tracking/1Z999AA1234567890/evidence/" | jq .
+
+# Para Go (Puerto 8083)
+curl -s "http://localhost:8083/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Para Rust (Puerto 8082)
+curl -s "http://localhost:8082/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Respuesta Esperada:
+{
+  "trackingNumber": "1Z999AA1234567890",
+  "evidenceCount": 0,
+  "evidence": []
+}
+```
+
+#### Paso 2: Subir Evidencia
+
+Subir una imagen de prueba con descripción:
+
+```bash
+# Para Node.js (Puerto 3000)
+curl -X POST \
+  "http://localhost:3000/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@imagen-prueba.png" \
+  -F "description=Evidencia de entrega de prueba - paquete en puerta principal" \
+  | jq .
+
+# Para Python Django (Puerto 8000) - Nota la barra final
+curl -X POST \
+  "http://localhost:8000/api/v1/tracking/1Z999AA1234567890/evidence/" \
+  -F "image=@imagen-prueba.png" \
+  -F "description=Evidencia de entrega de prueba - paquete en puerta principal" \
+  | jq .
+
+# Para Go (Puerto 8083)
+curl -X POST \
+  "http://localhost:8083/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@imagen-prueba.png" \
+  -F "description=Evidencia de entrega de prueba - paquete en puerta principal" \
+  | jq .
+
+# Para Rust (Puerto 8082)
+curl -X POST \
+  "http://localhost:8082/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@imagen-prueba.png" \
+  -F "description=Evidencia de entrega de prueba - paquete en puerta principal" \
+  | jq .
+
+# Respuesta Esperada:
+{
+  "success": true,
+  "message": "Delivery evidence uploaded successfully",
+  "trackingNumber": "1Z999AA1234567890",
+  "evidence": {
+    "id": "uuid-generado",
+    "filename": "uuid-nombre-archivo.png",
+    "originalName": "imagen-prueba.png",
+    "size": 70,
+    "mimeType": "image/png",
+    "uploadedAt": "2025-08-27T05:46:06.169Z",
+    "description": "Evidencia de entrega de prueba - paquete en puerta principal",
+    "url": "/uploads/evidence/1Z999AA1234567890/uuid-nombre-archivo.png"
+  }
+}
+```
+
+#### Paso 3: Verificar que la Evidencia fue Almacenada
+
+Recuperar la lista de evidencia para confirmar la subida:
+
+```bash
+# Usar los mismos comandos GET del Paso 1
+curl -s "http://localhost:{puerto}/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Respuesta Esperada (ahora con evidencia):
+{
+  "trackingNumber": "1Z999AA1234567890",
+  "evidenceCount": 1,
+  "evidence": [
+    {
+      "id": "uuid-generado",
+      "filename": "uuid-nombre-archivo.png",
+      "originalName": "imagen-prueba.png",
+      "size": 70,
+      "mimeType": "image/png",
+      "uploadedAt": "2025-08-27T05:46:06.169Z",
+      "description": "Evidencia de entrega de prueba - paquete en puerta principal",
+      "url": "/uploads/evidence/1Z999AA1234567890/uuid-nombre-archivo.png"
+    }
+  ]
+}
+```
+
+#### Paso 4: Probar Acceso a Archivos
+
+Verificar que los archivos subidos son accesibles vía URL:
+
+```bash
+# Probar acceso a archivo vía URL estática
+curl -I "http://localhost:{puerto}/uploads/evidence/1Z999AA1234567890/uuid-nombre-archivo.png"
+
+# Headers de Respuesta Esperados:
+HTTP/1.1 200 OK
+Content-Type: image/png
+Content-Length: 70
+```
+
+#### Paso 5: Probar Escenarios de Error
+
+Probar varias condiciones de error:
+
+```bash
+# Probar archivo faltante
+curl -X POST \
+  "http://localhost:{puerto}/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "description=Prueba sin archivo" \
+  | jq .
+
+# Esperado: 400 Bad Request con mensaje de error
+
+# Probar tipo de archivo inválido (crear archivo de texto con extensión .exe)
+echo "archivo inválido" > invalido.exe
+curl -X POST \
+  "http://localhost:{puerto}/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@invalido.exe" \
+  -F "description=Prueba de tipo de archivo inválido" \
+  | jq .
+
+# Esperado: 400 Bad Request con error de tipo de archivo
+```
+
+#### Paso 6: Probar Eliminación de Evidencia (Opcional)
+
+Probar eliminar evidencia subida:
+
+```bash
+# Obtener ID de evidencia de respuestas anteriores, luego eliminar
+curl -X DELETE \
+  "http://localhost:{puerto}/api/v1/tracking/1Z999AA1234567890/evidence/uuid-generado" \
+  | jq .
+
+# Respuesta Esperada:
+{
+  "success": true,
+  "message": "Evidence deleted successfully"
+}
+
+# Verificar eliminación
+curl -s "http://localhost:{puerto}/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Debería mostrar evidenceCount: 0 nuevamente
+```
+
+### Lista de Verificación de Pruebas de Evidencia
+
+Usar esta lista para verificar funcionalidad de evidencia:
+
+- [ ] **Estado Vacío**: Solicitud GET retorna lista de evidencia vacía
+- [ ] **Subida Exitosa**: POST con imagen válida sube exitosamente
+- [ ] **Validación de Subida**: POST sin archivo retorna error
+- [ ] **Validación de Tipo de Archivo**: Tipos de archivo inválidos son rechazados
+- [ ] **Acceso a Archivos**: Archivos subidos son accesibles vía URL
+- [ ] **Recuperación de Evidencia**: Solicitud GET muestra evidencia subida
+- [ ] **Eliminación de Evidencia**: Solicitud DELETE remueve evidencia
+- [ ] **Generación de UUID**: Cada subida obtiene nombre de archivo único
+- [ ] **Almacenamiento de Metadatos**: Nombre original, tamaño y descripción son almacenados
+
+### Pruebas de Subida de Múltiples Archivos
+
+Probar subir múltiples archivos de evidencia:
+
+```bash
+# Subir primera evidencia
+curl -X POST "http://localhost:{puerto}/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@imagen-prueba.png" \
+  -F "description=Foto de entrega en puerta principal"
+
+# Subir segunda evidencia  
+curl -X POST "http://localhost:{puerto}/api/v1/tracking/1Z999AA1234567890/evidence" \
+  -F "image=@imagen-prueba.png" \
+  -F "description=Foto de primer plano del paquete"
+
+# Verificar que ambas están almacenadas
+curl -s "http://localhost:{puerto}/api/v1/tracking/1Z999AA1234567890/evidence" | jq .
+
+# Debería mostrar evidenceCount: 2 con ambos archivos
+```
 
 ### 🐛 Solución de Problemas
 
@@ -644,6 +1102,6 @@ done
 time curl -s "http://localhost:3000/api/v1/tracking/1Z999AA1234567890" > /dev/null  # Node.js
 time curl -s "http://localhost:8000/api/v1/tracking/1Z999AA1234567890/" > /dev/null # Python
 time curl -s "http://localhost:8080/api/v1/tracking/1Z999AA1234567890" > /dev/null  # PHP
-time curl -s "http://localhost:8081/api/v1/tracking/1Z999AA1234567890" > /dev/null  # Go
+time curl -s "http://localhost:8083/api/v1/tracking/1Z999AA1234567890" > /dev/null  # Go
 time curl -s "http://localhost:8082/api/v1/tracking/1Z999AA1234567890" > /dev/null  # Rust
 ```

@@ -10,6 +10,16 @@
 
 The Package Tracking API provides a standardized interface to track packages across different carriers. It follows REST principles and returns data in a format similar to major logistics providers.
 
+This API is implemented in 5 different programming languages, each running on a different port:
+
+| Language | Framework | Port | Features |
+|----------|-----------|------|----------|
+| Node.js | Express | 3000 | Full CRUD + Evidence Upload/Delete |
+| Python | Django | 8000 | Full CRUD + Evidence Upload/Delete |
+| PHP | Laravel | 8080 | Full CRUD + Evidence Upload/Delete |
+| Go | Gin | 8083 | Full CRUD + Evidence Upload/Delete |
+| Rust | Actix-web | 8082 | Full CRUD + Evidence Upload/Delete |
+
 ### Base URL
 
 ```
@@ -22,7 +32,7 @@ Currently, no authentication is required for this demo API. In production, consi
 
 ### Endpoints
 
-#### Get Tracking Information
+#### 1. Get Tracking Information
 
 **GET** `/tracking/{trackingNumber}`
 
@@ -118,6 +128,194 @@ curl -X GET "http://localhost:3000/api/v1/tracking/1Z999AA1234567890" \
      -H "Accept: application/json"
 ```
 
+---
+
+#### 2. Upload Delivery Evidence
+
+**POST** `/tracking/{trackingNumber}/evidence`
+
+Uploads delivery evidence (photo) for a specific package delivery.
+
+**Parameters:**
+- `trackingNumber` (string, required): The tracking number of the package
+- `image` (file, required): The evidence image file (JPEG, PNG, GIF, WebP)
+- `description` (string, optional): Description of the evidence
+- `location` (string, optional): Location where the evidence was taken
+
+**Request Format (multipart/form-data):**
+
+```bash
+curl -X POST "http://localhost:3000/api/v1/tracking/1Z999AA1234567890/evidence" \
+     -F "image=@delivery_photo.jpg" \
+     -F "description=Package delivered to front door" \
+     -F "location=Front door of residence"
+```
+
+**Response Format (Success - 201 Created):**
+
+```json
+{
+  "success": true,
+  "message": "Delivery evidence uploaded successfully",
+  "trackingNumber": "1Z999AA1234567890",
+  "evidence": {
+    "id": "evidence_123456",
+    "filename": "delivery_photo.jpg",
+    "originalName": "IMG_001.jpg",
+    "size": 245760,
+    "mimeType": "image/jpeg",
+    "uploadedAt": "2025-08-27T10:30:00Z",
+    "description": "Package delivered to front door",
+    "location": "Front door of residence",
+    "url": "/uploads/evidence/1Z999AA1234567890/evidence_123456.jpg"
+  }
+}
+```
+
+**File Requirements:**
+- **Maximum file size**: 5MB
+- **Allowed formats**: JPEG, PNG, GIF, WebP
+- **Dimensions**: Maximum 4096x4096 pixels
+
+**Error Responses:**
+
+#### 404 - Tracking Number Not Found
+```json
+{
+  "error": "tracking_not_found",
+  "message": "Tracking number not found",
+  "trackingNumber": "INVALID123"
+}
+```
+
+#### 400 - Invalid File
+```json
+{
+  "error": "invalid_file",
+  "message": "Invalid file format. Only JPEG, PNG, GIF, WebP are allowed",
+  "allowedTypes": ["image/jpeg", "image/png", "image/gif", "image/webp"]
+}
+```
+
+#### 413 - File Too Large
+```json
+{
+  "error": "file_too_large",
+  "message": "File size exceeds 5MB limit",
+  "maxSize": "5MB"
+}
+```
+
+#### 400 - Missing File
+```json
+{
+  "error": "missing_file",
+  "message": "No image file provided",
+  "field": "image"
+}
+```
+
+---
+
+#### 3. Get Delivery Evidence
+
+**GET** `/tracking/{trackingNumber}/evidence`
+
+Retrieves all delivery evidence for a specific package.
+
+**Parameters:**
+- `trackingNumber` (string, required): The tracking number of the package
+
+**Example Request:**
+
+```bash
+curl -X GET "http://localhost:3000/api/v1/tracking/1Z999AA1234567890/evidence"
+```
+
+**Response Format (Success - 200 OK):**
+
+```json
+{
+  "trackingNumber": "1Z999AA1234567890",
+  "evidenceCount": 2,
+  "evidence": [
+    {
+      "id": "evidence_123456",
+      "filename": "evidence_123456.jpg",
+      "originalName": "delivery_photo.jpg",
+      "size": 245760,
+      "mimeType": "image/jpeg",
+      "uploadedAt": "2025-08-27T10:30:00Z",
+      "description": "Package delivered to front door",
+      "location": "Front door of residence",
+      "url": "/uploads/evidence/1Z999AA1234567890/evidence_123456.jpg"
+    },
+    {
+      "id": "evidence_789012",
+      "filename": "evidence_789012.png",
+      "originalName": "signature.png",
+      "size": 89456,
+      "mimeType": "image/png",
+      "uploadedAt": "2025-08-27T10:35:00Z",
+      "description": "Recipient signature",
+      "location": "",
+      "url": "/uploads/evidence/1Z999AA1234567890/evidence_789012.png"
+    }
+  ]
+}
+```
+
+**Empty Response (No Evidence):**
+
+```json
+{
+  "trackingNumber": "1Z999AA1234567890",
+  "evidenceCount": 0,
+  "evidence": []
+}
+```
+
+---
+
+#### 4. Delete Delivery Evidence
+
+**DELETE** `/tracking/{trackingNumber}/evidence/{evidenceId}`
+
+Deletes a specific piece of delivery evidence.
+
+**Parameters:**
+- `trackingNumber` (string, required): The tracking number of the package
+- `evidenceId` (string, required): The ID of the evidence to delete
+
+**Example Request:**
+
+```bash
+curl -X DELETE "http://localhost:3000/api/v1/tracking/1Z999AA1234567890/evidence/evidence_123456"
+```
+
+**Response Format (Success - 200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "Evidence deleted successfully",
+  "evidenceId": "evidence_123456"
+}
+```
+
+**Error Responses:**
+
+#### 404 - Evidence Not Found
+```json
+{
+  "error": "evidence_not_found",
+  "message": "Evidence with specified ID not found",
+  "evidenceId": "evidence_123456"
+}
+```
+
+---
+
 ### Example Response
 
 ```json
@@ -174,6 +372,16 @@ curl -X GET "http://localhost:3000/api/v1/tracking/1Z999AA1234567890" \
 ### Resumen
 
 La API de Seguimiento de Paquetes proporciona una interfaz estandarizada para rastrear paquetes a través de diferentes transportistas. Sigue principios REST y devuelve datos en un formato similar a los principales proveedores logísticos.
+
+Esta API está implementada en 5 lenguajes de programación diferentes, cada uno ejecutándose en un puerto diferente:
+
+| Lenguaje | Framework | Puerto | Funcionalidades |
+|----------|-----------|--------|-----------------|
+| Node.js | Express | 3000 | CRUD Completo + Subida/Eliminación de Evidencia |
+| Python | Django | 8000 | CRUD Completo + Subida/Eliminación de Evidencia |
+| PHP | Laravel | 8080 | CRUD Completo + Subida/Eliminación de Evidencia |
+| Go | Gin | 8083 | CRUD Completo + Subida/Eliminación de Evidencia |
+| Rust | Actix-web | 8082 | CRUD Completo + Subida/Eliminación de Evidencia |
 
 ### URL Base
 

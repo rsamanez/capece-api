@@ -10,6 +10,10 @@ RUN apt-get update && apt-get install -y \
 # Copy project files
 COPY index.php .
 
+# Create uploads and storage directories with proper permissions
+RUN mkdir -p uploads/evidence && chmod 777 uploads/evidence
+RUN mkdir -p storage && chmod 777 storage
+
 # Expose port
 EXPOSE 8080
 

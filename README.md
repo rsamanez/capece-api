@@ -11,8 +11,10 @@ A comprehensive package tracking API with implementations in multiple programmin
 ### 🚀 Features
 
 - **Multi-language implementations**: Node.js/Express, Python/Django, PHP/Laravel, Go, Rust
+- **Evidence upload functionality**: Upload and manage delivery evidence (photos, documents)
 - **Standardized data model**: Compatible with major logistics providers
-- **Simple GET endpoint**: Easy integration for developers
+- **RESTful API endpoints**: GET tracking info, POST/GET/DELETE evidence
+- **File upload support**: PNG, JPG, JPEG, PDF with validation
 - **Comprehensive documentation**: Available in English and Spanish
 - **Production-ready**: Includes error handling, validation, and best practices
 - **Docker support**: Easy deployment with Docker Compose
@@ -25,7 +27,7 @@ A comprehensive package tracking API with implementations in multiple programmin
 | Node.js  | Express   | ✅     | 3000 | `nodejs-express/` |
 | Python   | Django    | ✅     | 8000 | `python-django/` |
 | PHP      | Laravel   | ✅     | 8080 | `php-laravel/` |
-| Go       | Gin       | ✅     | 8081 | `go/` |
+| Go       | Gin       | ✅     | 8083 | `go/` |
 | Rust     | Actix-web | ✅     | 8082 | `rust/` |
 
 ### 🔧 Quick Start
@@ -59,6 +61,21 @@ See individual README files in each implementation directory.
 ```
 GET /api/v1/tracking/{trackingNumber}
 ```
+
+### 📎 Evidence Upload Endpoints
+
+```
+# Upload evidence
+POST /api/v1/tracking/{trackingNumber}/evidence
+
+# Get evidence list
+GET /api/v1/tracking/{trackingNumber}/evidence
+
+# Delete evidence
+DELETE /api/v1/tracking/{trackingNumber}/evidence/{evidenceId}
+```
+
+> 📘 **Evidence Documentation**: For complete evidence upload integration guide, see [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md#evidence-upload-functionality)
 
 ### 📊 Response Format
 
@@ -131,8 +148,8 @@ curl -s "http://localhost:8000/api/v1/tracking/1Z999AA1234567890/" | jq .
 # PHP (port 8080) - requires Docker
 curl -s "http://localhost:8080/api/v1/tracking/1Z999AA1234567890" | jq .
 
-# Go (port 8081)
-curl -s "http://localhost:8081/api/v1/tracking/1Z999AA1234567890" | jq .
+# Go (port 8083)
+curl -s "http://localhost:8083/api/v1/tracking/1Z999AA1234567890" | jq .
 
 # Rust (port 8082)
 curl -s "http://localhost:8082/api/v1/tracking/1Z999AA1234567890" | jq .
@@ -191,8 +208,10 @@ Una API completa de seguimiento de paquetes con implementaciones en múltiples l
 ### 🚀 Características
 
 - **Implementaciones multi-lenguaje**: Node.js/Express, Python/Django, PHP/Laravel, Go, Rust
+- **Funcionalidad de subida de evidencia**: Subir y gestionar evidencia de entrega (fotos, documentos)
 - **Modelo de datos estandarizado**: Compatible con principales proveedores logísticos
-- **Endpoint GET simple**: Fácil integración para desarrolladores
+- **Endpoints API RESTful**: GET info de seguimiento, POST/GET/DELETE evidencia
+- **Soporte de subida de archivos**: PNG, JPG, JPEG, PDF con validación
 - **Documentación completa**: Disponible en inglés y español
 - **Listo para producción**: Incluye manejo de errores, validación y mejores prácticas
 - **Soporte Docker**: Fácil despliegue con Docker Compose
@@ -205,7 +224,7 @@ Una API completa de seguimiento de paquetes con implementaciones en múltiples l
 | Node.js  | Express   | ✅     | 3000   | `nodejs-express/` |
 | Python   | Django    | ✅     | 8000   | `python-django/` |
 | PHP      | Laravel   | ✅     | 8080   | `php-laravel/` |
-| Go       | Gin       | ✅     | 8081   | `go/` |
+| Go       | Gin       | ✅     | 8083   | `go/` |
 | Rust     | Actix-web | ✅     | 8082   | `rust/` |
 
 ### 🔧 Inicio Rápido
@@ -240,6 +259,21 @@ Ver archivos README individuales en cada directorio de implementación.
 GET /api/v1/tracking/{numeroSeguimiento}
 ```
 
+### 📎 Endpoints de Subida de Evidencia
+
+```
+# Subir evidencia
+POST /api/v1/tracking/{numeroSeguimiento}/evidence
+
+# Obtener lista de evidencia
+GET /api/v1/tracking/{numeroSeguimiento}/evidence
+
+# Eliminar evidencia
+DELETE /api/v1/tracking/{numeroSeguimiento}/evidence/{evidenceId}
+```
+
+> 📘 **Documentación de Evidencia**: Para la guía completa de integración de subida de evidencia, ver [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md#funcionalidad-de-subida-de-evidencia)
+
 ### 🧪 Pruebas
 
 Para instrucciones detalladas paso a paso de pruebas, consulta la [Guía de Pruebas](TESTING_GUIDE.md).
@@ -269,8 +303,8 @@ curl -s "http://localhost:8000/api/v1/tracking/1Z999AA1234567890/" | jq .
 # PHP (puerto 8080) - requiere Docker
 curl -s "http://localhost:8080/api/v1/tracking/1Z999AA1234567890" | jq .
 
-# Go (puerto 8081)
-curl -s "http://localhost:8081/api/v1/tracking/1Z999AA1234567890" | jq .
+# Go (puerto 8083)
+curl -s "http://localhost:8083/api/v1/tracking/1Z999AA1234567890" | jq .
 
 # Rust (puerto 8082)
 curl -s "http://localhost:8082/api/v1/tracking/1Z999AA1234567890" | jq .

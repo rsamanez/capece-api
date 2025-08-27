@@ -141,12 +141,89 @@ main() {
     done
     
     echo "================================================="
+    echo -e "${BLUE}Testing Evidence Upload Functionality${NC}"
+    echo "================================================="
+    
+    # Create test image if it doesn't exist
+    if [ ! -f "test-image.png" ]; then
+        echo "Creating test image file..."
+        echo "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==" | base64 -d > test-image.png
+    fi
+    
+    # Evidence endpoints for testing
+    EVIDENCE_ENDPOINTS=(
+        "http://localhost:3000/api/v1/tracking/1Z999AA1234567890/evidence|Node.js|3000"
+        "http://localhost:8000/api/v1/tracking/1Z999AA1234567890/evidence/|Python|8000"
+        "http://localhost:8083/api/v1/tracking/1Z999AA1234567890/evidence|Go|8083"
+        "http://localhost:8082/api/v1/tracking/1Z999AA1234567890/evidence|Rust|8082"
+    )
+    
+    # Test evidence functionality for each running service
+    for endpoint in "${EVIDENCE_ENDPOINTS[@]}"; do
+        IFS='|' read -r url name port <<< "$endpoint"
+        
+        if check_service "$port" "$name"; then
+            echo -e "${BLUE}Testing evidence functionality for $name${NC}"
+            
+            # Test 1: Get evidence (should be empty initially)
+            echo "  1. Testing empty evidence list..."
+            response=$(curl -s -w "HTTPSTATUS:%{http_code}" "$url")
+            http_code=$(echo $response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+            
+            if [ "$http_code" = "200" ]; then
+                echo -e "     ${GREEN}✓ GET evidence endpoint working${NC}"
+            else
+                echo -e "     ${RED}✗ GET evidence failed (HTTP $http_code)${NC}"
+                continue
+            fi
+            
+            # Test 2: Upload evidence
+            echo "  2. Testing evidence upload..."
+            upload_response=$(curl -s -w "HTTPSTATUS:%{http_code}" \
+                -X POST "$url" \
+                -F "image=@test-image.png" \
+                -F "description=Test evidence upload")
+            upload_http_code=$(echo $upload_response | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+            
+            if [ "$upload_http_code" = "200" ]; then
+                echo -e "     ${GREEN}✓ Evidence upload successful${NC}"
+                
+                # Test 3: Verify evidence was stored
+                echo "  3. Verifying evidence was stored..."
+                verify_response=$(curl -s "$url")
+                if echo "$verify_response" | grep -q '"evidenceCount":[[:space:]]*[1-9]'; then
+                    echo -e "     ${GREEN}✓ Evidence successfully stored and retrievable${NC}"
+                else
+                    echo -e "     ${YELLOW}⚠ Evidence upload succeeded but verification failed${NC}"
+                fi
+            else
+                echo -e "     ${RED}✗ Evidence upload failed (HTTP $upload_http_code)${NC}"
+            fi
+            
+            echo ""
+        fi
+    done
+    
+    # Clean up test file
+    if [ -f "test-image.png" ]; then
+        rm test-image.png
+        echo "Cleaned up test image file"
+    fi
+    
+    echo "================================================="
     echo -e "${GREEN}Testing completed!${NC}"
+    echo ""
+    echo "✅ Tested tracking endpoints across all implementations"
+    echo "✅ Tested evidence upload functionality where available"
     echo ""
     echo "To start all services, run: ./start-all.sh"
     echo "To test individual endpoints:"
     echo "  curl http://localhost:3000/api/v1/tracking/1Z999AA1234567890"
     echo "  curl http://localhost:8000/api/v1/tracking/FDX123456789012"
+    echo ""
+    echo "To test evidence upload manually:"
+    echo "  curl -X POST http://localhost:3000/api/v1/tracking/1Z999AA1234567890/evidence \\"
+    echo "    -F 'image=@your-image.png' -F 'description=Test upload'"
 }
 
 # Check if curl and jq are available

@@ -70,7 +70,7 @@ php artisan serve --port=8080
 cd go
 go mod tidy
 go run main.go
-# Runs on http://localhost:8081
+# Runs on http://localhost:8083
 ```
 
 #### Rust
@@ -115,7 +115,7 @@ upstream tracking_backends {
     server localhost:3000;
     server localhost:8000;
     server localhost:8080;
-    server localhost:8081;
+    server localhost:8083;
     server localhost:8082;
 }
 
@@ -209,7 +209,7 @@ php artisan serve --port=8080
 cd go
 go mod tidy
 go run main.go
-# Se ejecuta en http://localhost:8081
+# Se ejecuta en http://localhost:8083
 ```
 
 #### Rust
@@ -254,7 +254,7 @@ upstream tracking_backends {
     server localhost:3000;
     server localhost:8000;
     server localhost:8080;
-    server localhost:8081;
+    server localhost:8083;
     server localhost:8082;
 }
 
