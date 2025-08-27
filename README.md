@@ -26,7 +26,7 @@ A comprehensive package tracking API with implementations in multiple programmin
 |----------|-----------|--------|------|-----------|
 | Node.js  | Express   | ✅     | 3000 | `nodejs-express/` |
 | Python   | Django    | ✅     | 8000 | `python-django/` |
-| PHP      | Laravel   | ✅     | 8080 | `php-laravel/` |
+| PHP      | Vanilla   | ✅     | 8080 | `php/` |
 | Go       | Gin       | ✅     | 8083 | `go/` |
 | Rust     | Actix-web | ✅     | 8082 | `rust/` |
 
@@ -232,7 +232,7 @@ Una API completa de seguimiento de paquetes con implementaciones en múltiples l
 |----------|-----------|--------|--------|------------|
 | Node.js  | Express   | ✅     | 3000   | `nodejs-express/` |
 | Python   | Django    | ✅     | 8000   | `python-django/` |
-| PHP      | Laravel   | ✅     | 8080   | `php-laravel/` |
+| PHP      | Vanilla   | ✅     | 8080   | `php/` |
 | Go       | Gin       | ✅     | 8083   | `go/` |
 | Rust     | Actix-web | ✅     | 8082   | `rust/` |
 

@@ -123,7 +123,7 @@ curl -s "http://localhost:8000/api/v1/tracking/INVALID123/" | jq .
 
 **Step 1: Navigate and Build**
 ```bash
-cd php-laravel
+cd php
 docker build -t tracking-api-php .
 ```
 
@@ -691,7 +691,7 @@ curl -s "http://localhost:8000/api/v1/tracking/INVALID123/" | jq .
 
 **Paso 1: Navegar y Construir**
 ```bash
-cd php-laravel
+cd php
 docker build -t tracking-api-php .
 ```
 

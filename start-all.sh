@@ -52,15 +52,11 @@ start_python() {
     echo -e "${GREEN}Python server started on port 8000 (PID: $PYTHON_PID)${NC}"
 }
 
-# Function to start PHP Laravel implementation
+# Function to start PHP Vanilla implementation
 start_php() {
-    echo -e "${BLUE}Starting PHP Laravel implementation...${NC}"
-    cd php-laravel
-    if [ ! -d "vendor" ]; then
-        echo "Installing PHP dependencies..."
-        composer install > /dev/null 2>&1
-    fi
-    php artisan serve --port=8080 &
+    echo -e "${BLUE}Starting PHP Vanilla implementation...${NC}"
+    cd php
+    php -S localhost:8080 index.php &
     PHP_PID=$!
     cd ..
     echo -e "${GREEN}PHP server started on port 8080 (PID: $PHP_PID)${NC}"

@@ -18,7 +18,7 @@ This API is implemented in 5 different programming languages, each running on a 
 |----------|-----------|------|----------|
 | Node.js | Express | 3000 | Full CRUD + Evidence Upload/Delete |
 | Python | Django | 8000 | Full CRUD + Evidence Upload/Delete |
-| PHP | Laravel | 8080 | Full CRUD + Evidence Upload/Delete |
+| PHP | Vanilla | 8080 | Full CRUD + Evidence Upload/Delete |
 | Go | Gin | 8083 | Full CRUD + Evidence Upload/Delete |
 | Rust | Actix-web | 8082 | Full CRUD + Evidence Upload/Delete |
 
@@ -381,7 +381,7 @@ Esta API está implementada en 5 lenguajes de programación diferentes, cada uno
 |----------|-----------|--------|-----------------|
 | Node.js | Express | 3000 | CRUD Completo + Subida/Eliminación de Evidencia |
 | Python | Django | 8000 | CRUD Completo + Subida/Eliminación de Evidencia |
-| PHP | Laravel | 8080 | CRUD Completo + Subida/Eliminación de Evidencia |
+| PHP | Vanilla | 8080 | CRUD Completo + Subida/Eliminación de Evidencia |
 | Go | Gin | 8083 | CRUD Completo + Subida/Eliminación de Evidencia |
 | Rust | Actix-web | 8082 | CRUD Completo + Subida/Eliminación de Evidencia |
 

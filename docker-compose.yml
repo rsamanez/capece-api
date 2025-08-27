@@ -35,10 +35,10 @@ services:
       timeout: 10s
       retries: 3
 
-  # PHP Laravel implementation
+  # PHP Vanilla implementation
   php-api:
     build:
-      context: ./php-laravel
+      context: ./php
       dockerfile: Dockerfile
     ports:
       - "8080:8080"

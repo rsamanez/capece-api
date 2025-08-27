@@ -28,7 +28,7 @@ The Package Tracking API provides a simple REST endpoint to retrieve package tra
 |---------------|------|--------------|-------------------|
 | Node.js/Express | 3000 | `GET /health` | `GET /api/v1/tracking/{id}` |
 | Python/Django | 8000 | `GET /health/` | `GET /api/v1/tracking/{id}/` |
-| PHP | 8080 | `GET /health` | `GET /api/v1/tracking/{id}` |
+| PHP/Vanilla | 8080 | `GET /health` | `GET /api/v1/tracking/{id}` |
 | Go/Gin | 8083 | `GET /health` | `GET /api/v1/tracking/{id}` |
 | Rust/Actix-web | 8082 | `GET /health` | `GET /api/v1/tracking/{id}` |
 
@@ -245,7 +245,7 @@ The Evidence Upload API allows you to attach delivery evidence (photos, document
 |---------------|------|----------------|--------------|----------------|
 | Node.js/Express | 3000 | `POST /api/v1/tracking/{id}/evidence` | `GET /api/v1/tracking/{id}/evidence` | `DELETE /api/v1/tracking/{id}/evidence/{evidenceId}` |
 | Python/Django | 8000 | `POST /api/v1/tracking/{id}/evidence/` | `GET /api/v1/tracking/{id}/evidence/` | `DELETE /api/v1/tracking/{id}/evidence/{evidenceId}/` |
-| PHP/Laravel | 8080 | `POST /api/v1/tracking/{id}/evidence` | `GET /api/v1/tracking/{id}/evidence` | `DELETE /api/v1/tracking/{id}/evidence/{evidenceId}` |
+| PHP/Vanilla | 8080 | `POST /api/v1/tracking/{id}/evidence` | `GET /api/v1/tracking/{id}/evidence` | `DELETE /api/v1/tracking/{id}/evidence/{evidenceId}` |
 | Go/Gin | 8083 | `POST /api/v1/tracking/{id}/evidence` | `GET /api/v1/tracking/{id}/evidence` | `DELETE /api/v1/tracking/{id}/evidence/{evidenceId}` |
 | Rust/Actix-web | 8082 | `POST /api/v1/tracking/{id}/evidence` | `GET /api/v1/tracking/{id}/evidence` | `DELETE /api/v1/tracking/{id}/evidence/{evidenceId}` |
 
