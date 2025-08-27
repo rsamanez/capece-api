@@ -21,7 +21,7 @@ ENDPOINTS=(
     "http://localhost:3000/api/v1/tracking/1Z999AA1234567890|Node.js"
     "http://localhost:8000/api/v1/tracking/1Z999AA1234567890|Python"
     "http://localhost:8080/api/v1/tracking/1Z999AA1234567890|PHP"
-    "http://localhost:8081/api/v1/tracking/1Z999AA1234567890|Go"
+    "http://localhost:8083/api/v1/tracking/1Z999AA1234567890|Go"
     "http://localhost:8082/api/v1/tracking/1Z999AA1234567890|Rust"
 )
 
@@ -99,7 +99,7 @@ main() {
     check_service 3000 "Node.js" && test_health 3000 "Node.js"
     check_service 8000 "Python" && test_health 8000 "Python"
     check_service 8080 "PHP" && test_health 8080 "PHP"
-    check_service 8081 "Go" && test_health 8081 "Go"
+    check_service 8083 "Go" && test_health 8083 "Go"
     check_service 8082 "Rust" && test_health 8082 "Rust"
     
     echo "================================================="

@@ -69,7 +69,7 @@ start_go() {
     go run main.go &
     GO_PID=$!
     cd ..
-    echo -e "${GREEN}Go server started on port 8081 (PID: $GO_PID)${NC}"
+    echo -e "${GREEN}Go server started on port 8083 (PID: $GO_PID)${NC}"
 }
 
 # Function to start Rust implementation
@@ -138,7 +138,7 @@ main() {
     fi
     
     if [ -z "$SKIP_GO" ]; then
-        check_port 8081 && start_go
+        check_port 8083 && start_go
         sleep 2
     fi
     
@@ -155,7 +155,7 @@ main() {
     [ -z "$SKIP_NODE" ] && echo "  Node.js:  http://localhost:3000/api/v1/tracking/{trackingNumber}"
     [ -z "$SKIP_PYTHON" ] && echo "  Python:   http://localhost:8000/api/v1/tracking/{trackingNumber}"
     [ -z "$SKIP_PHP" ] && echo "  PHP:      http://localhost:8080/api/v1/tracking/{trackingNumber}"
-    [ -z "$SKIP_GO" ] && echo "  Go:       http://localhost:8081/api/v1/tracking/{trackingNumber}"
+    [ -z "$SKIP_GO" ] && echo "  Go:       http://localhost:8083/api/v1/tracking/{trackingNumber}"
     [ -z "$SKIP_RUST" ] && echo "  Rust:     http://localhost:8082/api/v1/tracking/{trackingNumber}"
     echo ""
     echo "Test with: curl http://localhost:3000/api/v1/tracking/1Z999AA1234567890"
