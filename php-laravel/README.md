@@ -1,5 +1,7 @@
 # PHP Laravel Implementation
 
+**Created by:** Rommel Samanez Carrillo | **Donated by:** [BOSS.TECHNOLOGIES](https://boss.technologies)
+
 ## Setup
 
 1. Install dependencies:

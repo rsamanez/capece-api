@@ -1,5 +1,7 @@
 # API Documentation / Documentación de la API
 
+**Created by:** Rommel Samanez Carrillo | **Donated by:** [BOSS.TECHNOLOGIES](https://boss.technologies)
+
 [English](#english-api-documentation) | [Español](#documentación-de-la-api-en-español)
 
 ---

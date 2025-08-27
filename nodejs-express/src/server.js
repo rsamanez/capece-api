@@ -1,3 +1,10 @@
+/**
+ * Package Tracking API - Node.js Express Implementation
+ * Created by: Rommel Samanez Carrillo
+ * Donated by: BOSS.TECHNOLOGIES (https://boss.technologies)
+ * License: MIT
+ */
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');

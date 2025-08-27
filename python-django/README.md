@@ -1,4 +1,7 @@
 # Python Django Implementation
+
+**Created by:** Rommel Samanez Carrillo | **Donated by:** [BOSS.TECHNOLOGIES](https://boss.technologies)
+
 ## Testing
 
 > 📖 **For complete testing guide**: See [../TESTING_GUIDE.md](../TESTING_GUIDE.md) for step-by-step instructions to test all implementations.

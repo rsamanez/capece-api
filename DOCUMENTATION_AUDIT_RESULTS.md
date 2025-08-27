@@ -1,5 +1,7 @@
 # Auditoría de Documentación - Resultados
 
+**Created by:** Rommel Samanez Carrillo | **Donated by:** [BOSS.TECHNOLOGIES](https://boss.technologies)
+
 ## Resumen Ejecutivo
 
 Se completó una auditoría completa de la documentación para las 5 implementaciones del Package Tracking API. Se identificaron y corrigieron varias inconsistencias importantes.

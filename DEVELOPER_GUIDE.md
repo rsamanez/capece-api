@@ -1,5 +1,7 @@
 # Developer Guide / Guía del Desarrollador
 
+**Created by:** Rommel Samanez Carrillo | **Donated by:** [BOSS.TECHNOLOGIES](https://boss.technologies)
+
 [English](#english-developer-guide) | [Español](#guía-del-desarrollador-en-español)
 
 ---

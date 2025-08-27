@@ -199,6 +199,15 @@ package-tracking-api/
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
+## 👨‍💻 Credits
+
+**Created by:** Rommel Samanez Carrillo  
+**Donated by:** [BOSS.TECHNOLOGIES](https://boss.technologies)
+
+This project has been developed and donated to the open source community as a contribution for learning and development of multi-language APIs. The complete implementation in 5 different programming languages (Node.js, Python, PHP, Go, Rust) demonstrates best practices in modern RESTful API development.
+
+📋 **For detailed credits and acknowledgments, see [CREDITS.md](CREDITS.md)**
+
 ---
 
 ## Español
@@ -343,3 +352,16 @@ Este proyecto incluye tareas de VS Code para facilitar el desarrollo:
 ### 📄 Licencia
 
 Licencia MIT - ver archivo [LICENSE](LICENSE) para detalles.
+
+## 👨‍💻 Créditos
+
+**Creado por:** Rommel Samanez Carrillo  
+**Donado por:** [BOSS.TECHNOLOGIES](https://boss.technologies)
+
+Este proyecto ha sido desarrollado y donado a la comunidad open source como una contribución para el aprendizaje y desarrollo de APIs multi-lenguaje. La implementación completa en 5 lenguajes de programación diferentes (Node.js, Python, PHP, Go, Rust) demuestra las mejores prácticas en el desarrollo de APIs RESTful modernas.
+
+📋 **Para más detalles sobre créditos y reconocimientos, ver [CREDITS.md](CREDITS.md)**
+
+---
+
+*💡 Si este proyecto te resulta útil, considera darle una ⭐ en GitHub y compartirlo con otros desarrolladores.*
